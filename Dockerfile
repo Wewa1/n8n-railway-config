@@ -1,16 +1,18 @@
 FROM n8nio/n8n
 
-# Готовим папку данных и права
+# Работаем под root, чтобы не было проблем с правами на примонтированный том
 USER root
-RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
 
-# Работаем НЕ от root (важно, чтобы путь был /home/node/.n8n)
-USER node
+# Домашняя директория node-пользователя и папка данных n8n
+ENV HOME=/home/node
+
+# Создаём папку под данные и даём права (на случай первого старта без тома)
+RUN mkdir -p /home/node/.n8n && chmod -R 777 /home/node/.n8n
+
+# Рабочая директория — папка данных
 WORKDIR /home/node/.n8n
 
-# Порт внутри контейнера (для справки)
 EXPOSE 5678
 
-# Базовая команда (без sh)
+# Базовый старт (порт и userFolder пробросим из Railway Start Command)
 CMD ["n8n", "start"]
-
