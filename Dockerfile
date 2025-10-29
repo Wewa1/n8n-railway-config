@@ -1,13 +1,16 @@
 FROM n8nio/n8n
 
+# Готовим папку данных и права
 USER root
+RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
 
-# Рабочая директория с данными n8n (креды, воркфлоу и т.п.)
+# Работаем НЕ от root (важно, чтобы путь был /home/node/.n8n)
+USER node
 WORKDIR /home/node/.n8n
 
-# Открываем стандартный порт контейнера (не критично для Railway, но полезно)
+# Порт внутри контейнера (для справки)
 EXPOSE 5678
 
-# Запускаем n8n на том порту, который задаёт Railway
-# (Railway задаёт $PORT на этапе запуска)
-CMD ["sh", "-lc", "n8n start --port=$PORT"]
+# Базовая команда (без sh)
+CMD ["n8n", "start"]
+
